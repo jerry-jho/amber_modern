@@ -1,0 +1,85 @@
+verdi:
+  defines: [
+    A25_DECOMPILE,
+    A25_CACHE_DEBUG,
+  ]   
+  options: [
+    -sverilog,
+    -2012
+  ]
+
+vcs:
+  defines: [
+    A25_DECOMPILE,
+    A25_CACHE_DEBUG,
+  ]   
+  options: [
+    -sverilog,
+    '-assert svaext',
+    '+lint=TFIPC-L',
+    '-timescale=1ns/1ps',
+  ]
+  
+a25:
+  root : '$A25_ROOT'
+  defines : [
+    
+    
+  ]
+  incdirs: [
+    rtl/include
+  ]
+  files: [
+    rtl/core/a25_alu.v,
+    rtl/core/a25_barrel_shift.v,
+    rtl/core/a25_coprocessor.v,
+    rtl/core/a25_core.v,
+    rtl/core/a25_dcache.v,
+    rtl/core/a25_decode.v,
+    rtl/core/a25_decompile.v,
+    rtl/core/a25_execute.v,
+    rtl/core/a25_fetch.v,
+    rtl/core/a25_icache.v,
+    rtl/core/a25_mem.v,
+    rtl/core/a25_multiply.v,
+    rtl/core/a25_register_bank.v,
+    rtl/core/a25_shifter.v,
+    rtl/core/a25_wishbone.v,
+    rtl/core/a25_wishbone_buf.v,
+    rtl/core/a25_write_back.v,
+    rtl/interface/a25_wbs2axilm.sv,
+    rtl/a25_top.v
+  ]
+  
+rtl:
+  root : '$A25_ROOT'
+  files: [
+    rtl/platform/generic_sram_line_en.v,
+    rtl/platform/generic_sram_byte_en.v,
+  ]
+  
+fpga:  
+    defines: [
+        VERILATOR
+    ]
+    
+fpga_syn:  
+    root : '$ARIANE_ROOT'
+    defines: [
+        VERILATOR,
+        NETLIST
+    ]
+    files : [
+        include/riscv_pkg.sv,
+        src/riscv-dbg/src/dm_pkg.sv,    
+        $ARIANE_SIMENV_ROOT/hack/ariane_pkg.sv,
+        $ARIANE_SIMENV_ROOT/hack/ariane_soc_pkg.sv,
+        $PWD/ariane.post_synth.sim.v
+    ]
+    
+tb:
+    root : '$A25_ROOT'
+    files : [
+        tb/tb.sv,
+        tb/axil_sram.sv
+    ]

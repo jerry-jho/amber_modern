@@ -1,4 +1,4 @@
-amber_modern
+Amber-Modern
 ============
 
-Project forked from amber
+A modern ARM-compatible core with AXI4-Lite Interface
