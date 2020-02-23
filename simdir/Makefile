@@ -60,7 +60,7 @@ vcs_fpgasyn: gen_flist_vcs_fpgasyn exec_vcs
 gen_flist_vivado: mkwork
 	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -e -f $(MAIN_SRC) -k a25_core,rtl,fpga -s vivado > flist_vivado.tcl    
 
-exec_vivado: mkwork gen_flist_vivado
+exec_vivado: mkwork gen_flist_vivado sw
 	#export XILINX_PART="xc7k325tffg900-2" | "xc7z020clg400-2"
 	cp $(A25_ROOT)/fpga/scripts/* $(WORK)/
 	cd $(WORK) && vivado -mode batch -source fpga_run.tcl

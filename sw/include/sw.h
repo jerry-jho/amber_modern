@@ -20,5 +20,8 @@
 #define out8(addr,data)   {*((volatile uint8_t  *)(addr)) = (uint8_t)(data);}
 #define in8(addr)         (*((volatile uint8_t *)(addr)))
 
+void _outb(uint32_t c);
+
+void print(const char * s);
 
 #endif

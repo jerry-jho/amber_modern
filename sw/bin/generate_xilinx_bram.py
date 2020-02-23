@@ -221,7 +221,7 @@ module %s #(parameter AW=32) (
             default : QS = 'd0;
         endcase
     end
-    assign o_wb_dat = QS;
+    assign o_wb_dat = i_wb_cyc ? QS : 'd0;
     \n"""
         
     rtn += "\nendmodule\n"

@@ -21,7 +21,6 @@ _start:
         .extern crtmain
         bl      crtmain
                 
+      
         
-        
-/* stack at top of ddr3 memory space */
 AdrStack:  .word  0x1000

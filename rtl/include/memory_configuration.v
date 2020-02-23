@@ -41,7 +41,7 @@
 //////////////////////////////////////////////////////////////////
 
 // e.g. 24 for 32MBytes, 26 for 128MBytes
-localparam MAIN_MSB             = 26; 
+localparam MAIN_MSB             = 24; 
 
 // e.g. 16 for 64k words
 localparam BOOT_MSB             = 16;  

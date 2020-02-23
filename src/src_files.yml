@@ -80,6 +80,7 @@ fpga:
         fpga/rtl/a25_fpga_top.v,
         rtl/wb/wb_crossbar.v,
         rtl/wb/wb_gpio_single.v,
+        rtl/wb/wb_uart.v,
         $XILINX_VIVADO/data/verilog/src/glbl.v,
         ./sram_sp_128x2048.v
     ]

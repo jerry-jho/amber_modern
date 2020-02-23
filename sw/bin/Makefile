@@ -22,8 +22,7 @@ CFLAGS= -O2 -march=armv2a -mno-thumb-interwork -ffreestanding \
         
 LDFLAGS = -Bstatic -Map app.map --strip-debug --fix-v4bx
 
-        
-APP=app.c
+
 STARTUP=$(SDK_ROOT)/src/start.S -nostdlib -nostartfiles
 LD_SCRIPT=$(SDK_ROOT)/etc/link.ld
 MAINSRC=$(SDK_ROOT)/src/sw.c
@@ -35,7 +34,7 @@ OUT=app.m64
 TEMPMEM=app.mem
 BASE=0x0
 firmware:
-	$(GCC) $(INCLUDES) $(CFLAGS) $(ARCH_IMC) $(APP) $(STARTUP) $(MAINSRC) -T$(LD_SCRIPT) -o app.elf
+	$(GCC) $(INCLUDES) $(CFLAGS) $(ARCH_IMC) app.c $(STARTUP) $(MAINSRC) -T$(LD_SCRIPT) -o app.elf
 	$(OBJDUMP) -dx --source app.elf > app.lst
 	$(OBJCOPY) -O verilog app.elf app.mem
 	$(MEM64) app.mem 128 $(BASE) mem > app.m64
