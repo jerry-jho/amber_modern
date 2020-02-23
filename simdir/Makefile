@@ -18,23 +18,31 @@ mkwork:
 	mkdir -p $(WORK)    
 
 gen_flist_verdi:mkwork
-	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -f $(MAIN_SRC) -k verdi,a25,rtl,tb > flist_verdi
+	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -f $(MAIN_SRC) -k verdi,a25_core,a25_top,rtl,tb > flist_verdi
+
+gen_flist_verdi_fpga: mkwork
+	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -f $(MAIN_SRC) -k verdi,a25_core,rtl,fpga,tb_cmod_a7 > flist_verdi 
 	
 gen_flist_verdi_fpgasyn: mkwork
-	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -f $(MAIN_SRC) -k verdi,fpga_syn,tb > flist_verdi   
+	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -f $(MAIN_SRC) -k verdi,fpga_syn,tb_cmod_a7 > flist_verdi   
     
 exec_verdi: mkwork
 	cd $(WORK) && $(SCRIPTS)/verdi.sh -f flist_verdi -ssf top.fsdb
 	
 verdi: gen_flist_verdi exec_verdi 
 
+verdi_fpga: sw gen_flist_verdi_fpga exec_verdi 
+
 verdi_fpgasyn: gen_flist_verdi_fpgasyn exec_verdi 
     
 gen_flist_vcs: mkwork
-	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -f $(MAIN_SRC) -k vcs,a25,rtl,tb > flist_vcs
+	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -f $(MAIN_SRC) -k vcs,a25_core,rtl,tb > flist_vcs
+
+gen_flist_vcs_fpga: mkwork
+	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -f $(MAIN_SRC) -k vcs,a25_core,rtl,fpga,tb_cmod_a7 > flist_vcs
 	
 gen_flist_vcs_fpgasyn: mkwork
-	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -f $(MAIN_SRC) -k vcs,fpga_syn,tb > flist_vcs   
+	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -f $(MAIN_SRC) -k vcs,fpga_syn,tb_cmod_a7 > flist_vcs   
     
 exec_vcs_nowave: mkwork
 	cd $(WORK) && $(SCRIPTS)/vcs.sh -f flist_vcs
@@ -45,14 +53,16 @@ exec_vcs: mkwork
 
 vcs: gen_flist_vcs exec_vcs
 
+vcs_fpga: sw gen_flist_vcs_fpga exec_vcs  
+
 vcs_fpgasyn: gen_flist_vcs_fpgasyn exec_vcs    
     
 gen_flist_vivado: mkwork
-	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -e -f $(MAIN_SRC) -k fpga,ariane -s vivado > flist_vivado.tcl    
+	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -e -f $(MAIN_SRC) -k a25_core,rtl,fpga -s vivado > flist_vivado.tcl    
 
 exec_vivado: mkwork gen_flist_vivado
 	#export XILINX_PART="xc7k325tffg900-2" | "xc7z020clg400-2"
-	cp $(A25_ROOT)/fpga/* $(WORK)/
+	cp $(A25_ROOT)/fpga/scripts/* $(WORK)/
 	cd $(WORK) && vivado -mode batch -source fpga_run.tcl
     
 #gen_flist_onefile: mkwork
@@ -88,3 +98,4 @@ sim_riscv-tests:
     
 sw:
 	cd $(A25_ROOT)/tests/$(APP) && make -f $(A25_ROOT)/sw/bin/Makefile
+	cp $(A25_ROOT)/tests/$(APP)/app.v $(WORK)/sram_sp_128x2048.v

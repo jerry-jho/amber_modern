@@ -37,7 +37,7 @@ module tb;
     logic check_a0 = 0;
     logic [63:0] expect_a0_data;
     logic [63:0] fetch_a0_data;
-    
+    `ifndef FPGA
     initial begin
         if ($value$plusargs("MEM_IN=%s", im64_file)) begin
             $display("-- Reading imem = %s",im64_file);
@@ -51,7 +51,7 @@ module tb;
             check_a0 = 1'b1;
         end        
     end
-    
+    `endif
 
 
 
@@ -72,7 +72,7 @@ module tb;
         $finish;
     end*/
     `endif
-    
+    `ifndef FPGA
     localparam AXI_DATA_WIDTH = 128;
     localparam AXI_ADDR_WIDTH = 32;
     localparam AXI_STRB_WIDTH = (AXI_DATA_WIDTH/8);
@@ -172,6 +172,17 @@ module tb;
         .s_axil_rvalid(i_axi_rvalid),
         .s_axil_rready(i_axi_rready)
     );        
-
+    `endif
+    
+    `ifdef FPGA
+    a25_fpga_top i_a25_top (
+        .clk(clk),
+        .rst_n(rst_n),
+        .gpio_o(),
+        .gpio_i(2'b0),
+        .tx(),
+        .rx()
+    );    
+    `endif
  
 endmodule

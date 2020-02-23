@@ -24,4 +24,4 @@ _start:
         
         
 /* stack at top of ddr3 memory space */
-AdrStack:  .word  0x8000
+AdrStack:  .word  0x1000

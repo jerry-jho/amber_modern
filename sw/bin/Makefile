@@ -13,6 +13,7 @@ INCLUDES=-I. -I$(SDK_ROOT)/include
 
 CFLAGS= -O2 -march=armv2a -mno-thumb-interwork -ffreestanding \
         -g \
+        -Wl,--build-id=none \
         -Wextra -Wall \
         -Wno-unused-parameter \
         -Wno-unused-variable \
@@ -29,6 +30,7 @@ MAINSRC=$(SDK_ROOT)/src/sw.c
 
 
 MEM64=python3 $(SDK_ROOT)/bin/process_mem.py
+BRAM=python3 $(SDK_ROOT)/bin/generate_xilinx_bram.py
 OUT=app.m64
 TEMPMEM=app.mem
 BASE=0x0
@@ -37,6 +39,7 @@ firmware:
 	$(OBJDUMP) -dx --source app.elf > app.lst
 	$(OBJCOPY) -O verilog app.elf app.mem
 	$(MEM64) app.mem 128 $(BASE) mem > app.m64
+	$(BRAM) app.mem 128 2048 > app.v
     
 elf2m64:
 	$(OBJCOPY) -O verilog $(ELF) $(TEMPMEM)

@@ -1,7 +1,10 @@
 #include <sw.h>
 
 int main(int argc,char ** argv) {
-    out32(0x21000000,0x2233);
-    out32(0x21000004,0x1234);
-    return 0x3456;
+    int i;
+    while (1) {
+        for (i=0;i<2400000;i++) out32(0x01000000,0x2);
+        for (i=0;i<2400000;i++) out32(0x01000000,0x1);
+    }
+    return 0;
 }

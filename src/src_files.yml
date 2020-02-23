@@ -5,7 +5,8 @@ verdi:
   ]   
   options: [
     -sverilog,
-    -2012
+    -2012,
+    +libext+.v
   ]
 
 vcs:
@@ -18,9 +19,10 @@ vcs:
     '-assert svaext',
     '+lint=TFIPC-L',
     '-timescale=1ns/1ps',
+    '+libext+.v'
   ]
   
-a25:
+a25_core:
   root : '$A25_ROOT'
   defines : [
     
@@ -46,9 +48,15 @@ a25:
     rtl/core/a25_shifter.v,
     rtl/core/a25_wishbone.v,
     rtl/core/a25_wishbone_buf.v,
-    rtl/core/a25_write_back.v,
-    rtl/interface/a25_wbs2axilm.sv,
-    rtl/a25_top.v
+    rtl/core/a25_write_back.v
+  ]
+
+a25_top:
+  root : '$A25_ROOT'
+  files: [
+    rtl/a25_top.v,
+    rtl/interface/a25_wbs2axilm.sv
+     
   ]
   
 rtl:
@@ -60,26 +68,41 @@ rtl:
   
 fpga:  
     defines: [
-        VERILATOR
+        FPGA
+    ]
+    root : '$A25_ROOT'
+    libdirs : [
+        $XILINX_VIVADO/data/verilog/src/unisims,
+        $XILINX_VIVADO/data/verilog/src/unimacro
+    ]
+    files: [
+        fpga/rtl/cmod_a7_top.v,
+        fpga/rtl/a25_fpga_top.v,
+        rtl/wb/wb_crossbar.v,
+        rtl/wb/wb_gpio_single.v,
+        $XILINX_VIVADO/data/verilog/src/glbl.v,
+        ./sram_sp_128x2048.v
     ]
     
 fpga_syn:  
-    root : '$ARIANE_ROOT'
+    root : '$A25_ROOT'
     defines: [
-        VERILATOR,
-        NETLIST
+        FPGA
     ]
     files : [
-        include/riscv_pkg.sv,
-        src/riscv-dbg/src/dm_pkg.sv,    
-        $ARIANE_SIMENV_ROOT/hack/ariane_pkg.sv,
-        $ARIANE_SIMENV_ROOT/hack/ariane_soc_pkg.sv,
-        $PWD/ariane.post_synth.sim.v
+        $PWD/a25.post_synth.sim.v
     ]
+
     
 tb:
     root : '$A25_ROOT'
     files : [
         tb/tb.sv,
-        tb/axil_sram.sv
+        tb/axil_sram.sv 
+    ]
+    
+tb_cmod_a7:
+    root : '$A25_ROOT'
+    files : [
+        tb/tb_cmod_a7.sv
     ]

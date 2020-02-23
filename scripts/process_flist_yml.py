@@ -36,7 +36,11 @@ for k in keylist.split(','):
         #print("+define+%s" % i)
         o_defines.append(i)
     for i in v.get('libdirs',[]):
-        o_libpath.append("%s/%s" % (root,i))
+        if i[0] == '$' or i[0] == '/' or i[0] == '.':
+            o_libpath.append(i)
+            #print("+incdir+%s" % i)
+        else:
+            o_libpath.append("%s/%s" % (root,i))
         #print("-y %s/%s" % )            
     for i in v.get('incdirs',[]):
         if i[0] == '$' or i[0] == '/' or i[0] == '.':
