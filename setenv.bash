@@ -1,2 +1,2 @@
-export A25_ROOT=/mnt/e/Develop/amber/amber_modern
+export A25_ROOT=/mnt/e/Develop/amber/amber_modern.git/trunk
 

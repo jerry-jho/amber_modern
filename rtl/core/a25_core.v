@@ -513,6 +513,25 @@ a25_coprocessor u_coprocessor (
     .o_cacheable_area                   ( cacheable_area                    )
 );
 
+//synopsys translate_off
+
+`include "debug_functions.v"
+
+a25_decompile  u_decompile (
+    .i_clk                      ( i_clk                                                ),
+    .i_core_stall               ( core_stall                                           ),
+    .i_mem_stall                ( mem_stall                                            ),
+    .i_instruction              ( u_decode.instruction                                 ),
+    .i_instruction_valid        ( u_decode.instruction_valid &&!conflict               ),
+    .i_instruction_execute      ( u_decode.instruction_execute                         ),
+    .i_instruction_address      ( u_decode.instruction_address                         ),
+    .i_interrupt                ( {3{ u_decode.interrupt}} &  u_decode.next_interrupt  ),
+    .i_interrupt_state          ( u_decode.control_state == u_decode.INT_WAIT2         ),
+    .i_instruction_undefined    ( u_decode.und_request                                 ),
+    .i_pc_sel                   ( pc_sel                                               ),
+    .i_pc_wen                   ( pc_wen                                               )
+);
+//synopsys translate_on
 
 endmodule
 

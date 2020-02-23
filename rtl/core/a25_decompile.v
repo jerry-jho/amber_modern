@@ -46,6 +46,7 @@ module a25_decompile
 (
 input                       i_clk,
 input                       i_core_stall,
+input                       i_mem_stall,
 input       [31:0]          i_instruction,
 input                       i_instruction_valid,
 input                       i_instruction_undefined,
@@ -59,7 +60,8 @@ input                       i_pc_wen
 );
 
 `include "a25_localparams.v"
-        
+`include "a25_functions.v"      
+
 `ifdef A25_DECOMPILE
 
 integer i;
@@ -840,9 +842,9 @@ input [2:0] num;
 begin
     case (num)
         3'd0: get_1bit_signal = `U_EXECUTE.o_write_enable;
-        3'd1: get_1bit_signal = `U_AMBER.mem_stall;
+        3'd1: get_1bit_signal = i_mem_stall;
         3'd2: get_1bit_signal = `U_EXECUTE.o_daddress_valid;
-        3'd3: get_1bit_signal = `U_AMBER.core_stall;
+        3'd3: get_1bit_signal = i_core_stall;
         3'd4: get_1bit_signal = `U_WB.mem_read_data_valid_r;
     endcase
 end
