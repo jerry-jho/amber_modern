@@ -3,7 +3,7 @@ module wb_down_bridge #( parameter
     SDW  = 128,
     SSW  = SDW >> 3,
     MDW  = 32,
-    MSW  = MDW >> 3,    
+    MSW  = MDW >> 3    
 ) (   
        
     input          [AW-1:0]      i_s_wb_adr,
@@ -17,7 +17,7 @@ module wb_down_bridge #( parameter
     output                       o_s_wb_err,
     
     output         [AW-1:0]      o_m_wb_adr,
-    output         [SSW-1:0]     o_m_wb_sel,
+    output         [MSW-1:0]     o_m_wb_sel,
     output                       o_m_wb_we,
     output         [MDW-1:0]     o_m_wb_dat,
     input          [MDW-1:0]     i_m_wb_dat,
@@ -41,9 +41,9 @@ module wb_down_bridge #( parameter
     genvar gs;
     generate
         for (gs=0;gs<(1<<LSW);gs=gs+1) begin : bs
-            assign sel_mux[gs] = i_s_wb_sel[(gs+1)*MSW:g*MSW];
-            assign dat_mux[gs] = i_s_wb_dat[(gs+1)*MDW:g*MDW];
-            assign o_s_wb_dat[(gs+1)*MDW:g*MDW] =  i_m_wb_dat;
+            assign sel_mux[gs] = i_s_wb_sel[(gs+1)*MSW-1:gs*MSW];
+            assign dat_mux[gs] = i_s_wb_dat[(gs+1)*MDW-1:gs*MDW];
+            assign o_s_wb_dat[(gs+1)*MDW-1:gs*MDW] =  i_m_wb_dat;
         end
     endgenerate
     

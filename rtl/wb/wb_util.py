@@ -3,7 +3,7 @@ import sys
 task = sys.argv[1]
 
 mo_ports = [
-    'adr','sel','dat','cyc','stb'
+    'adr','sel','dat','cyc','stb','we'
 ]
 
 mi_ports = [
@@ -34,7 +34,7 @@ if task == "sp" or task == "s":
     sw = sys.argv[2]
     for p in mo_ports:
         if p == 'dat':
-            pw = 'dat_r'
+            pw = 'dat_w'
         else:
             pw = p
         if task == "s":
@@ -43,7 +43,7 @@ if task == "sp" or task == "s":
             print("        .i_s_wb_%s(%s_wb_%s)," % (p,sw,pw))
     for p in mi_ports:
         if p == 'dat':
-            pw = 'dat_w'
+            pw = 'dat_r'
         else:
             pw = p
         if task == "s":

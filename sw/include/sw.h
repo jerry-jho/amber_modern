@@ -22,6 +22,19 @@
 
 void _outb(uint32_t c);
 
+#define set_outb_fake(x) out32(REG_UART_FAKE,x)
+
 void print(const char * s);
+
+///////////////// REGS /////////////////
+
+#define REG_UART_DR     0x02000000
+#define REG_UART_FR     0x02000018
+#define REG_UART_FAKE   0x02000020
+
+#define REG_GPIO        0x01000000
+#define REG_CYCLE       0x01000008
+#define REG_DONE        0x01FFFFFC
+
 
 #endif

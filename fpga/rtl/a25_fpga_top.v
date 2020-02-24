@@ -6,7 +6,8 @@ module a25_fpga_top #(
     output [1:0] gpio_o,
     input  [1:0] gpio_i,
     output tx,
-    input  rx
+    input  rx,
+    output done
 );
 
     localparam WB_AW = 32;
@@ -81,25 +82,62 @@ module a25_fpga_top #(
     wire                    sg_wb_ack;
     wire                    sg_wb_err;
     
+    wire      [WB_AW-1:0]   sgl_wb_adr;
+    wire      [WB_LSW-1:0]  sgl_wb_sel;
+    wire                    sgl_wb_we;
+    wire      [WB_LDW-1:0]  sgl_wb_dat_w;
+    wire      [WB_LDW-1:0]  sgl_wb_dat_r;
+    wire                    sgl_wb_cyc;
+    wire                    sgl_wb_stb;
+    wire                    sgl_wb_ack;
+    wire                    sgl_wb_err;    
+    
+    wb_down_bridge #(
+        .AW(WB_AW),
+        .SDW(WB_DW),
+        .MDW(WB_LDW)    
+    ) u_sg_bridge (   
+        .i_s_wb_adr(sg_wb_adr),
+        .i_s_wb_sel(sg_wb_sel),
+        .i_s_wb_dat(sg_wb_dat_w),
+        .i_s_wb_cyc(sg_wb_cyc),
+        .i_s_wb_stb(sg_wb_stb),
+        .i_s_wb_we(sg_wb_we),
+        .o_s_wb_dat(sg_wb_dat_r),
+        .o_s_wb_ack(sg_wb_ack),
+        .o_s_wb_err(sg_wb_err),
+        
+        .o_m_wb_adr(sgl_wb_adr),
+        .o_m_wb_sel(sgl_wb_sel),
+        .o_m_wb_dat(sgl_wb_dat_w),
+        .o_m_wb_cyc(sgl_wb_cyc),
+        .o_m_wb_stb(sgl_wb_stb),
+        .o_m_wb_we(sgl_wb_we),
+        .i_m_wb_dat(sgl_wb_dat_r),
+        .i_m_wb_ack(sgl_wb_ack),
+        .i_m_wb_err(sgl_wb_err)
+    );
+    
     wb_gpio_single  #(
         .MSK(24),
         .GW(2),
         .AW(WB_AW),
-        .DW(WB_DW)
+        .DW(WB_LDW)
     ) u_gpio (
         .clk            ( clk         ),
         .rst_n          ( rst_n       ),
         .gpio_i         ( gpio_i       ),
         .gpio_o         ( gpio_o       ),        
-        .i_wb_adr       ( sg_wb_adr    ),
-        .i_wb_sel       ( sg_wb_sel    ),
-        .i_wb_we        ( sg_wb_we     ),
-        .o_wb_dat       ( sg_wb_dat_r  ),
-        .i_wb_dat       ( sg_wb_dat_w  ),
-        .i_wb_cyc       ( sg_wb_cyc    ),
-        .i_wb_stb       ( sg_wb_stb    ),
-        .o_wb_ack       ( sg_wb_ack    ),
-        .o_wb_err       ( sg_wb_err    )
+        .i_wb_adr       ( sgl_wb_adr    ),
+        .i_wb_sel       ( sgl_wb_sel    ),
+        .i_wb_we        ( sgl_wb_we     ),
+        .o_wb_dat       ( sgl_wb_dat_r  ),
+        .i_wb_dat       ( sgl_wb_dat_w  ),
+        .i_wb_cyc       ( sgl_wb_cyc    ),
+        .i_wb_stb       ( sgl_wb_stb    ),
+        .o_wb_ack       ( sgl_wb_ack    ),
+        .o_wb_err       ( sgl_wb_err    ),
+        .done           ( done          )
     );  
     
     wire      [WB_AW-1:0]   ss_wb_adr;

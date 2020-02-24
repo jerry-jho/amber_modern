@@ -104,7 +104,7 @@ localparam AMBER_UART_CR           =  16'h0014;
 localparam AMBER_UART_FR           =  16'h0018;
 localparam AMBER_UART_IIR          =  16'h001c;
 localparam AMBER_UART_ICR          =  16'h001c;
-
+localparam AMBER_UART_FKR          =  16'h0020;
 
 localparam [3:0] TXD_IDLE  = 4'd0,
                  TXD_START = 4'd1,
@@ -256,7 +256,29 @@ else
     end
 endgenerate
 
-        
+// ======================================================
+// UART 0 Fake
+// ======================================================    
+
+reg uart_fake = 1'b0;
+always @ ( posedge i_clk ) if (wb_start_write && i_wb_adr[15:0] == AMBER_UART_FKR) uart_fake <= wb_wdata32[0];
+
+//synopsys translate_off
+integer fp;
+initial begin
+    fp = $fopen("vserial.log","w");
+end
+
+wire en_uart_fake = wb_start_write && i_wb_adr[15:0] == AMBER_UART_DR && uart_fake;
+wire [7:0] ch = wb_wdata32[7:0];
+always @(posedge i_clk)
+    if (en_uart_fake) begin
+        $fwrite(fp,"%c",ch);
+        if (ch == 8'h13) $fflush(fp);
+        $write("%c",ch);
+    end  
+//synopsys translate_on 
+    
 // ======================================================
 // UART 0 Receive FIFO
 // ======================================================    
@@ -370,7 +392,7 @@ assign   tx_fifo_empty              = fifo_enable ? tx_fifo_count == 5'd00 : !tx
 assign   tx_fifo_half_or_less_full  =               tx_fifo_count <= 5'd8;
 assign   tx_byte                    = fifo_enable ? tx_fifo[tx_fifo_rp[3:0]] : tx_fifo[0] ;
 
-assign   tx_fifo_push               = wb_start_write && i_wb_adr[15:0] == AMBER_UART_DR;
+assign   tx_fifo_push               = wb_start_write && i_wb_adr[15:0] == AMBER_UART_DR && !uart_fake;
 assign   tx_fifo_push_not_full      = tx_fifo_push && !tx_fifo_full;
 assign   tx_fifo_pop_not_empty      = txd_state == TXD_STOP3 && tx_bit_pulse == 1'd1 && !tx_fifo_empty;
 

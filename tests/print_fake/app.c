@@ -1,8 +1,8 @@
+
 #include <sw.h>
 
 int main(int argc,char ** argv) {
-    int i;
-    out32(REG_GPIO,0x1);
-    out32(REG_GPIO,0x2);
+    set_outb_fake(1);
+    print("hello!\n");
     return 0;
 }

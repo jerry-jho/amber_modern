@@ -75,6 +75,7 @@ fpga_generic:
     ]
     files: [        
         fpga/rtl/a25_fpga_top.v,
+        rtl/wb/wb_down_bridge.v,
         rtl/wb/wb_crossbar.v,
         rtl/wb/wb_gpio_single.v,
         rtl/wb/wb_uart.v,

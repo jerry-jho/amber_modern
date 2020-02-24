@@ -3,6 +3,7 @@
 
 WORK=work
 APP=smoke
+FSDB_EN=1
 
 ############### ENV ###############
 
@@ -27,7 +28,7 @@ exec_vcs: mkwork
 	cd $(WORK) && $(SCRIPTS)/vcs.sh -f flist_vcs -fsdb +define+_FSDB | tee build.log
     
 sim: mkwork sw
-	cd $(WORK) && ./simv +MEM_IN=$(A25_ROOT)/tests/$(APP)/app.m64    
+	cd $(WORK) && ./simv +MEM_IN=$(A25_ROOT)/tests/$(APP)/app.m64 +FSDB_EN=$(FSDB_EN)    
 
 sw:
 	cd $(A25_ROOT)/tests/$(APP) && make -f $(A25_ROOT)/sw/bin/Makefile

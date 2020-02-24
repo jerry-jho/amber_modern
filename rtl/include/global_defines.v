@@ -7,6 +7,6 @@
 
 `define TB_ERROR_MESSAGE        $display("\nFATAL ERROR in %m @%t",$realtime);
 `define TB_DEBUG_MESSAGE        $display("\nDebug in %m @%t",$realtime);
-`define AMBER_UART_DEBUG
+//`define AMBER_UART_DEBUG
 
 `endif

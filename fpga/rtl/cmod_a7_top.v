@@ -88,9 +88,10 @@ module cmod_a7_top (
         .gpio_o(led),
         .gpio_i({btn[1],btn[1]}),
         .tx(uart_rxd_out),
-        .rx(uart_txd_in)
+        .rx(uart_txd_in),
+        .done(led0_r)
     );     
     
-    assign {led0_b,led0_g,led0_r} = 3'b111;
+    assign {led0_b,led0_g} = 2'b11;
     
 endmodule
