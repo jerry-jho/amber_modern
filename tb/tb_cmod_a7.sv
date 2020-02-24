@@ -25,7 +25,19 @@ module tb;
         repeat(10000) @(posedge sysclk);
 		$finish;
     end
-    cmod_a7_top cmod_a7_top (
+    
+    string im64_file;
+    
+    `ifndef NETLIST
+    initial begin
+        if ($value$plusargs("MEM_IN=%s", im64_file)) begin
+            $display("[TB] Reading imem = %s",im64_file);
+            dut.i_a25_top.u_rom.load_mem(im64_file);
+        end        
+    end
+    `endif
+    
+    cmod_a7_top dut (
         .sysclk(sysclk),
         .btn({1'b0,rst}),
         .led(),

@@ -19,14 +19,13 @@ vcs:
     '-assert svaext',
     '+lint=TFIPC-L',
     '-timescale=1ns/1ps',
-    '+libext+.v'
+    '+libext+.v',
+    -v2k_generate
   ]
   
 a25_core:
   root : '$A25_ROOT'
   defines : [
-    
-    
   ]
   incdirs: [
     rtl/include
@@ -51,22 +50,21 @@ a25_core:
     rtl/core/a25_write_back.v
   ]
 
-a25_top:
+a25_axil_top:
   root : '$A25_ROOT'
   files: [
     rtl/a25_top.v,
     rtl/interface/a25_wbs2axilm.sv
-     
   ]
   
-rtl:
+sram_generic:
   root : '$A25_ROOT'
   files: [
     rtl/platform/generic_sram_line_en.v,
     rtl/platform/generic_sram_byte_en.v,
   ]
   
-fpga:  
+fpga_generic:  
     defines: [
         FPGA
     ]
@@ -75,25 +73,52 @@ fpga:
         $XILINX_VIVADO/data/verilog/src/unisims,
         $XILINX_VIVADO/data/verilog/src/unimacro
     ]
-    files: [
-        fpga/rtl/cmod_a7_top.v,
+    files: [        
         fpga/rtl/a25_fpga_top.v,
         rtl/wb/wb_crossbar.v,
         rtl/wb/wb_gpio_single.v,
         rtl/wb/wb_uart.v,
         $XILINX_VIVADO/data/verilog/src/glbl.v,
-        ./sram_sp_128x2048.v
+        
     ]
     
-fpga_syn:  
+rtl_cmod_a7:    
     root : '$A25_ROOT'
     defines: [
         FPGA
     ]
     files : [
-        $PWD/a25.post_synth.sim.v
+        fpga/rtl/cmod_a7_top.v,    
     ]
 
+rom_cmod_a7:
+    root : '$A25_ROOT'
+    defines: [
+        FPGA
+    ]
+    files : [    
+        $PWD/sram_sp_128x2048.v
+    ]
+
+rom_generic:
+    root : '$A25_ROOT'
+    defines: [
+        FPGA
+    ]
+    files : [    
+        rtl/wb/wb_sram.v,
+        rtl/platform/sram_sp_128x2048.v
+    ]    
+    
+syn_cmod_a7:  
+    root : '$A25_ROOT'
+    defines: [
+        FPGA,
+        NETLIST
+    ]
+    files : [
+        $PWD/a25.post_synth.sim.v
+    ]
     
 tb:
     root : '$A25_ROOT'

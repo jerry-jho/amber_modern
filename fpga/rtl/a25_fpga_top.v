@@ -56,7 +56,7 @@ module a25_fpga_top #(
     wire                    sr_wb_ack;
     wire                    sr_wb_err;
     
-    sram_sp_128x2048 u_room (
+    sram_sp_128x2048 u_rom (
         .clk            ( clk         ),
         .rst_n          ( rst_n       ),
 

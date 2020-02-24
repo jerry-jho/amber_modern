@@ -222,6 +222,16 @@ module %s #(parameter AW=32) (
         endcase
     end
     assign o_wb_dat = i_wb_cyc ? QS : 'd0;
+    
+    //synopsys translate_off
+    task load_mem;
+        input string filename;
+        begin
+            $display("[NOTE] load_mem here takes no affect, must make sw before compilation");
+        end
+    endtask
+    //synopsys translate_on 
+    
     \n"""
         
     rtn += "\nendmodule\n"
