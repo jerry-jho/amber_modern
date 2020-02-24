@@ -25,8 +25,9 @@ module tb;
             $fsdbDumpvars(0,tb);
 		`endif
         end
-        repeat(10000) @(posedge sysclk);
-		$finish;
+        repeat(100000) @(posedge sysclk);
+		$display("[ERROR] Simulation Timeout");
+        $finish;
     end
     
     string im64_file;
@@ -41,6 +42,7 @@ module tb;
     `endif
     wire led0_r;
     wire tx_out;
+    wire rx_in;
     
     cmod_a7_top dut (
         .sysclk(sysclk),
@@ -50,7 +52,7 @@ module tb;
         .led0_g(),
         .led0_r(led0_r),
         .uart_rxd_out(tx_out),
-        .uart_txd_in(tx_out)
+        .uart_txd_in(rx_in)
     );
     
     wire rx_valid;
@@ -72,6 +74,56 @@ module tb;
         .rx_ready_i(1'b1)
     );
     
+    wire mtx_busy;
+    reg [7:0] mtx_data = 'd0;
+    reg       mtx_valid = 'd0;
+    
+    uart_tx (
+        .clk_i(sysclk),
+        .rstn_i(~rst),
+        .tx_o(rx_in),
+        .busy_o(mtx_busy),
+        .cfg_div_i(16'd104), //115200@12M
+        .cfg_en_i(1'b1),
+        .cfg_parity_en_i(1'b0),
+        .cfg_bits_i(2'b11),
+        .cfg_stop_bits_i(1'b1),
+        .tx_data_i(mtx_data),
+        .tx_valid_i(mtx_valid),
+        .tx_ready_o()
+    );
+    
+    task mputchar;
+        input [7:0] d;
+        begin
+            while (mtx_busy == 1'b1) begin
+                @(posedge sysclk);
+            end
+            mtx_data = d;
+            mtx_valid = 1'b0;
+            @(negedge sysclk);
+            mtx_valid = 1'b1;
+            @(negedge sysclk);
+            mtx_valid = 1'b0;
+            @(negedge sysclk);
+            @(posedge sysclk);    
+        end
+    endtask
+    
+    initial begin
+        @(negedge rst);
+        repeat(300) @(posedge sysclk);
+        /*
+        mputchar(8'h00);
+        mputchar(8'h00);
+        mputchar(8'hFF);
+        mputchar(8'h00);
+        mputchar(8'h00);
+        mputchar(8'h00);
+        mputchar(8'h00);
+        mputchar(8'h00);*/        
+    end
+    
     always @(negedge sysclk) begin
         if (rx_valid) begin
             $display("[TX] %c (%02X)",rx_data,rx_data);
@@ -80,6 +132,7 @@ module tb;
     
     always @(posedge led0_r) begin
         repeat(100) @(posedge sysclk);
+        $display("[INFO] Simulation Finishes");
         $finish;
     end
 

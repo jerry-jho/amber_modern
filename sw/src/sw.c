@@ -42,5 +42,50 @@ void crtmain() {
 }
 
 void __attribute__((section(".xinit"))) bslmain() {
+    #ifdef _BSL_
+    uint8_t ibuf[8];
+    uint32_t addr;
+    uint32_t data;
+    uint32_t cmd;
+    uint32_t cnt = 0;
+    __asm__ __volatile__("mov r0,#0x00000000");
+    __asm__ __volatile__("mov sp,#0x1000");
+    putchar(0x5A);
+    while (1) {
+        for (uint32_t i=0;i<sizeof(ibuf);i++) {
+            ibuf[i] = getchar();
+        }
+        putchar(cnt++);
+        
+        addr = ibuf[3];
+        addr = addr << 16;
+        addr |= ibuf[1];
+        addr = addr << 8;
+        addr |= ibuf[0];        
+       
+        data = ibuf[7];
+        data = data << 8;
+        data |= ibuf[6];
+        data = data << 8;
+        data |= ibuf[5];
+        data = data << 8;
+        data |= ibuf[4];  
+        
+        cmd = ibuf[2];
+
+        if (cmd == 0x1) {
+            out32(addr,data);
+        } else if (cmd == 0x0) {
+            data = in32(addr);
+            putchar(data);
+            putchar((data)>>8);
+            putchar((data)>>16);
+            putchar((data)>>24);
+        } else {
+            __asm__ __volatile__("swi 0");
+        }
+    }
+    #else
     __asm__ __volatile__("swi 0");
+    #endif
 }

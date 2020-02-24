@@ -1,6 +1,7 @@
 ARMGCC_PREFIX=arm-none-eabi-
 SDK_ROOT=$(A25_ROOT)/sw
 
+OPTS=
 
 GCC=$(ARMGCC_PREFIX)gcc
 LINK=$(ARMGCC_PREFIX)link
@@ -34,7 +35,7 @@ OUT=app.m64
 TEMPMEM=app.mem
 BASE=0x0
 firmware:
-	$(GCC) $(INCLUDES) $(CFLAGS) $(ARCH_IMC) app.c $(STARTUP) $(MAINSRC) -T$(LD_SCRIPT) -o app.elf
+	$(GCC) $(INCLUDES) $(CFLAGS) $(ARCH_IMC) app.c $(STARTUP) $(MAINSRC) $(OPTS) -T$(LD_SCRIPT) -o app.elf
 	$(OBJDUMP) -dx --source app.elf > app.lst
 	$(OBJCOPY) -O verilog app.elf app.mem
 	$(MEM64) app.mem 128 $(BASE) mem > app.m64

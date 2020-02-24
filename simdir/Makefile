@@ -4,6 +4,7 @@
 WORK=work
 APP=smoke
 FSDB_EN=1
+OPTS=
 
 ############### ENV ###############
 
@@ -31,7 +32,7 @@ sim: mkwork sw
 	cd $(WORK) && ./simv +MEM_IN=$(A25_ROOT)/tests/$(APP)/app.m64 +FSDB_EN=$(FSDB_EN)    
 
 sw: mkwork
-	cd $(A25_ROOT)/tests/$(APP) && make -f $(A25_ROOT)/sw/bin/Makefile
+	cd $(A25_ROOT)/tests/$(APP) && make -f $(A25_ROOT)/sw/bin/Makefile OPTS=$(OPTS)
 	cp $(A25_ROOT)/tests/$(APP)/app.v $(WORK)/sram_sp_128x2048.v
     
 ############### CA7_FPGA_BEH = Cmod A7 Behavior The firmware is float ###############    
