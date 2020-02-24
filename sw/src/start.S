@@ -1,8 +1,11 @@
 	.section .text
 	.globl	start 
-_start:               
-        /* Switch to User Mode */
-        /* and unset interrupt mask bits */
+_start:             
+        /*bsl entry*/
+        bl      _bsl_entry
+        /*err entry*/
+        bl      _err_entry
+_entry:
         mov     r0, #0x00000000
         teqp    pc, r0 
  
@@ -20,7 +23,12 @@ _start:
         @ jump to crtmain
         .extern crtmain
         bl      crtmain
-                
+_bsl_entry:
+        .extern bslmain
+        bl      bslmain 
+_err_entry:
+        .extern _exit
+        bl      _exit                 
       
         
 AdrStack:  .word  0x1000

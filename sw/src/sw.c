@@ -30,9 +30,17 @@ void print(const char *s) {
     while (*s != '\0') putchar(*s++);
 }
 
-void crtmain() {
-    main(0,NULL);
+void _exit(uint32_t e) {
     _wait_uart_tx();
     out32(REG_DONE,0x1);
-    while(1);
+    while(1);    
+}
+
+void crtmain() {
+    main(0,NULL);
+    _exit(0);
+}
+
+void bslmain() {
+    __asm__ __volatile__("swi 0");
 }
