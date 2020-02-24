@@ -1,6 +1,7 @@
 
 from collections import OrderedDict
 import math
+import sys
 
 def PyMem_Iter(_mdata):
     _addr  = 0
@@ -49,6 +50,7 @@ class PyMEM:
         return PyMem_Iter(self._mdata)
     
 def generate_init_parameters(mem,start_addr,row_width,row_stride,row_count,output_w):
+    #sys.stderr.write("row start_addr = %08X\n"%start_addr)
     mem_in_bytes = []
     rtn = ""
     addr = start_addr
@@ -160,7 +162,7 @@ module %s #(parameter AW=32) (
        .SRVAL(36'h0), // Set/Reset value for port output
        .WRITE_MODE("WRITE_FIRST"), // "WRITE_FIRST", "READ_FIRST", or "NO_CHANGE"             
             \n"""
-            rtn += generate_init_parameters(mem, row*FIX_MDEPTH*FIX_MWEWIDTH+col*FIX_MWEWIDTH, 
+            rtn += generate_init_parameters(mem, row*FIX_MDEPTH*(mwdith//8)+col*FIX_MWEWIDTH, 
                                             FIX_MWEWIDTH, 
                                            mwdith//8, 
                                            FIX_MDEPTH, 

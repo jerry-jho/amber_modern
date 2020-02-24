@@ -14,5 +14,9 @@ SECTIONS {
  	.bss : { *(.bss); }
 
 	.stack : { __stack = . ; }
+    
+    . = 0x7800;
+    
+    .xinit : { *(.xinit); }
 
 }

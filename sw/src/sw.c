@@ -41,6 +41,6 @@ void crtmain() {
     _exit(0);
 }
 
-void bslmain() {
+void __attribute__((section(".xinit"))) bslmain() {
     __asm__ __volatile__("swi 0");
 }

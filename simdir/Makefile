@@ -30,7 +30,7 @@ exec_vcs: mkwork
 sim: mkwork sw
 	cd $(WORK) && ./simv +MEM_IN=$(A25_ROOT)/tests/$(APP)/app.m64 +FSDB_EN=$(FSDB_EN)    
 
-sw:
+sw: mkwork
 	cd $(A25_ROOT)/tests/$(APP) && make -f $(A25_ROOT)/sw/bin/Makefile
 	cp $(A25_ROOT)/tests/$(APP)/app.v $(WORK)/sram_sp_128x2048.v
     
