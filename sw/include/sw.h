@@ -20,7 +20,8 @@
 #define out8(addr,data)   {*((volatile uint8_t  *)(addr)) = (uint8_t)(data);}
 #define in8(addr)         (*((volatile uint8_t *)(addr)))
 
-void _outb(uint32_t c);
+void putchar(uint32_t c);
+uint32_t getchar();
 
 #define set_outb_fake(x) out32(REG_UART_FAKE,x)
 

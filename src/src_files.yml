@@ -131,5 +131,6 @@ tb:
 tb_cmod_a7:
     root : '$A25_ROOT'
     files : [
-        tb/tb_cmod_a7.sv
+        tb/tb_cmod_a7.sv,
+        tb/uart_rx.sv
     ]

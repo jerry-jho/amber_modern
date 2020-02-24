@@ -1,10 +1,11 @@
 module a25_fpga_top #(
-    parameter real CLK_FREQ = 12
+    parameter real CLK_FREQ = 12,
+    parameter GPIO_GW       = 2
 ) (
     input  clk,
     input  rst_n,
-    output [1:0] gpio_o,
-    input  [1:0] gpio_i,
+    output [GPIO_GW-1:0] gpio_o,
+    input  [GPIO_GW-1:0] gpio_i,
     output tx,
     input  rx,
     output done
@@ -120,7 +121,7 @@ module a25_fpga_top #(
     
     wb_gpio_single  #(
         .MSK(24),
-        .GW(2),
+        .GW(GPIO_GW),
         .AW(WB_AW),
         .DW(WB_LDW)
     ) u_gpio (

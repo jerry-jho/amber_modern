@@ -80,18 +80,19 @@ module cmod_a7_top (
       .O(clk), // 1-bit output: Clock output
       .I(clk_pll_out)  // 1-bit input: Clock input
     );
+    wire led0_gn,led0_bn;
     
-    
-    a25_fpga_top i_a25_top (
+    a25_fpga_top #(.GPIO_GW(4)) i_a25_top (
         .clk(clk),
         .rst_n(rst_n),
-        .gpio_o(led),
-        .gpio_i({btn[1],btn[1]}),
+        .gpio_o({led0_gn,led0_bn,led}),
+        .gpio_i({3'b0,btn[1]}),
         .tx(uart_rxd_out),
         .rx(uart_txd_in),
         .done(led0_r)
     );     
+    assign led0_g = ~led0_gn;
+    assign led0_b = ~led0_bn;
     
-    assign {led0_b,led0_g} = 2'b11;
     
 endmodule
