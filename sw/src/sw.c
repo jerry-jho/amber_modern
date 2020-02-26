@@ -65,7 +65,17 @@ uint32_t getchar1() {
     return in32(REG_UART1_DR);
 }
 
-void __attribute__((section(".xinit"))) bslmain() {
+#ifdef _BLS_UART0_
+#define putchar_bls     putchar
+#define getchar_bls     getchar
+#define _wait_uart_bls  _wait_uart_tx
+#else
+#define putchar_bls putchar1
+#define getchar_bls getchar1
+#define _wait_uart_bls  _wait_uart1_tx
+#endif
+
+void __attribute__((section(".xinit"))) bls_main() {
     #ifndef _NO_BLS_
     uint8_t ibuf[8];
     uint32_t addr;
@@ -75,12 +85,12 @@ void __attribute__((section(".xinit"))) bslmain() {
     __asm__ __volatile__("mov r0,#0x00000000");
     __asm__ __volatile__("mcr 15,0,r0,cr2,cr0,0");
     __asm__ __volatile__("mov sp,#0x1000");
-    putchar1(0x5A);
+    putchar_bls(0x5A);
     while (1) {
         for (uint32_t i=0;i<sizeof(ibuf);i++) {
-            ibuf[i] = getchar1();
+            ibuf[i] = getchar_bls();
         }
-        putchar1(cnt++);
+        putchar_bls(cnt++);
         
         addr = ibuf[3];
         addr = addr << 16;
@@ -102,12 +112,12 @@ void __attribute__((section(".xinit"))) bslmain() {
             out32(addr,data);
         } else if (cmd == 0x0) {
             data = in32(addr);
-            putchar1(data);
-            putchar1((data)>>8);
-            putchar1((data)>>16);
-            putchar1((data)>>24);
+            putchar_bls(data);
+            putchar_bls((data)>>8);
+            putchar_bls((data)>>16);
+            putchar_bls((data)>>24);
         } else {
-            _wait_uart1_tx();
+            _wait_uart_bls();
             __asm__ __volatile__("mcr 15,0,r0,cr1,cr0,0");
             __asm__ __volatile__("swi 0");
         }

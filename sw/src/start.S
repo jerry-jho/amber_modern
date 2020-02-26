@@ -2,7 +2,8 @@
 	.globl	start 
 _start:             
         /*bsl entry*/
-        bl      _bsl_entry
+        .extern bls_main
+        bl      bls_main 
         /*err entry*/
         bl      _err_entry
 _entry:
@@ -27,9 +28,8 @@ _entry:
         @ jump to crtmain
         .extern crtmain
         bl      crtmain
-_bsl_entry:
-        .extern bslmain
-        bl      bslmain 
+
+
 _err_entry:
         .extern _exit
         bl      _exit                 
