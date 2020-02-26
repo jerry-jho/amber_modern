@@ -8,6 +8,8 @@ module a25_fpga_top #(
     input  [GPIO_GW-1:0] gpio_i,
     output tx,
     input  rx,
+    output tx1,
+    input  rx1,    
     output done
 );
 
@@ -177,21 +179,57 @@ module a25_fpga_top #(
         .i_uart_rxd(rx)      // Receive data
     );
 
+    wire      [WB_AW-1:0]   ss1_wb_adr;
+    wire      [WB_SW-1:0]   ss1_wb_sel;
+    wire                    ss1_wb_we;
+    wire      [WB_DW-1:0]   ss1_wb_dat_w;
+    wire      [WB_DW-1:0]   ss1_wb_dat_r;
+    wire                    ss1_wb_cyc;
+    wire                    ss1_wb_stb;
+    wire                    ss1_wb_ack;
+    wire                    ss1_wb_err;    
+    
+    
+    wb_uart  #(
+        .CLK_FREQ(CLK_FREQ),
+        .UART_BAUD(115200),
+        .WB_DWIDTH(WB_DW)
+    ) i_uart1 (
+        .i_clk(clk),
+        .i_rst_n(rst_n),
+        .i_wb_adr(ss1_wb_adr),
+        .i_wb_sel(ss1_wb_sel),
+        .i_wb_we(ss1_wb_we),
+        .i_wb_dat(ss1_wb_dat_w),
+        .i_wb_cyc(ss1_wb_cyc),
+        .i_wb_stb(ss1_wb_stb),
+        .o_wb_dat(ss1_wb_dat_r),
+        .o_wb_ack(ss1_wb_ack),
+        .o_wb_err(ss1_wb_err),
+        
+        .o_uart_int(),
+
+        .i_uart_cts_n(1'b0),   // Clear To Send
+        .o_uart_txd(tx1),     // Transmit data
+        .o_uart_rts_n(),   // Request to Send
+        .i_uart_rxd(rx1)      // Receive data
+    );
+    
     wb_crossbar  #(
         .MSK(24),
-        .NS(3),
+        .NS(4),
         .AW(WB_AW),
         .DW(WB_DW)
     ) u_xbar (
-        .m_wb_adr({ss_wb_adr,sg_wb_adr,sr_wb_adr}),
-        .m_wb_sel({ss_wb_sel,sg_wb_sel,sr_wb_sel}),
-        .m_wb_we({ss_wb_we,sg_wb_we,sr_wb_we}),
-        .m_wb_dat_i({ss_wb_dat_r,sg_wb_dat_r,sr_wb_dat_r}),
-        .m_wb_dat_o({ss_wb_dat_w,sg_wb_dat_w,sr_wb_dat_w}),
-        .m_wb_cyc({ss_wb_cyc,sg_wb_cyc,sr_wb_cyc}),
-        .m_wb_stb({ss_wb_stb,sg_wb_stb,sr_wb_stb}),
-        .m_wb_ack({ss_wb_ack,sg_wb_ack,sr_wb_ack}),
-        .m_wb_err({ss_wb_err,sg_wb_err,sr_wb_err}),
+        .m_wb_adr   ({ss1_wb_adr  ,ss_wb_adr  ,sg_wb_adr  ,sr_wb_adr}),
+        .m_wb_sel   ({ss1_wb_sel  ,ss_wb_sel  ,sg_wb_sel  ,sr_wb_sel}),
+        .m_wb_we    ({ss1_wb_we   ,ss_wb_we   ,sg_wb_we   ,sr_wb_we}),
+        .m_wb_dat_i ({ss1_wb_dat_r,ss_wb_dat_r,sg_wb_dat_r,sr_wb_dat_r}),
+        .m_wb_dat_o ({ss1_wb_dat_w,ss_wb_dat_w,sg_wb_dat_w,sr_wb_dat_w}),
+        .m_wb_cyc   ({ss1_wb_cyc  ,ss_wb_cyc  ,sg_wb_cyc  ,sr_wb_cyc}),
+        .m_wb_stb   ({ss1_wb_stb  ,ss_wb_stb  ,sg_wb_stb  ,sr_wb_stb}),
+        .m_wb_ack   ({ss1_wb_ack  ,ss_wb_ack  ,sg_wb_ack  ,sr_wb_ack}),
+        .m_wb_err   ({ss1_wb_err  ,ss_wb_err  ,sg_wb_err  ,sr_wb_err}),
     
         .s_wb_adr(m_wb_adr),
         .s_wb_sel(m_wb_sel),

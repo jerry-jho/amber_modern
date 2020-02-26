@@ -41,21 +41,46 @@ void crtmain() {
     _exit(0);
 }
 
+void _wait_uart1_tx() {
+    uint32_t r = in32(REG_UART1_FR);
+    while ((r & 0x8) == 0x8) {
+        r = in32(REG_UART1_FR);
+    }    
+}
+
+void _wait_uart1_rx() {
+    uint32_t r = in32(REG_UART1_FR);
+    while ((r & 0x40) != 0x40) {
+        r = in32(REG_UART1_FR);
+    }    
+}
+
+void putchar1(uint32_t c) {
+    _wait_uart1_tx();
+    out32(REG_UART1_DR,c);
+}
+
+uint32_t getchar1() {
+    _wait_uart1_rx();
+    return in32(REG_UART1_DR);
+}
+
 void __attribute__((section(".xinit"))) bslmain() {
-    #ifdef _BSL_
+    #ifndef _NO_BLS_
     uint8_t ibuf[8];
     uint32_t addr;
     uint32_t data;
     uint32_t cmd;
     uint32_t cnt = 0;
     __asm__ __volatile__("mov r0,#0x00000000");
+    __asm__ __volatile__("mcr 15,0,r0,cr2,cr0,0");
     __asm__ __volatile__("mov sp,#0x1000");
-    putchar(0x5A);
+    putchar1(0x5A);
     while (1) {
         for (uint32_t i=0;i<sizeof(ibuf);i++) {
-            ibuf[i] = getchar();
+            ibuf[i] = getchar1();
         }
-        putchar(cnt++);
+        putchar1(cnt++);
         
         addr = ibuf[3];
         addr = addr << 16;
@@ -77,11 +102,13 @@ void __attribute__((section(".xinit"))) bslmain() {
             out32(addr,data);
         } else if (cmd == 0x0) {
             data = in32(addr);
-            putchar(data);
-            putchar((data)>>8);
-            putchar((data)>>16);
-            putchar((data)>>24);
+            putchar1(data);
+            putchar1((data)>>8);
+            putchar1((data)>>16);
+            putchar1((data)>>24);
         } else {
+            _wait_uart1_tx();
+            __asm__ __volatile__("mcr 15,0,r0,cr1,cr0,0");
             __asm__ __volatile__("swi 0");
         }
     }

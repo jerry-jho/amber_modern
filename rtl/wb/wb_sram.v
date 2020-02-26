@@ -34,10 +34,23 @@ module wb_sram #( parameter
     wire CE = i_wb_cyc & istat;
     assign o_wb_ack = ~istat;
     assign o_wb_err = 1'b0;
+    
+    wire [DW-1:0] msk;
+    genvar g;
+    generate
+        for (g=0;g<SW;g=g+1) begin
+            assign msk[(g+1)*8-1:g*8] = {8{i_wb_sel[g]}};
+        end
+    endgenerate
+
+    reg [DW-1:0] tmp;
 
     always @(posedge clk) begin
         if (CE & i_wb_we) begin
-            mem[mem_addr] <= i_wb_dat;
+            tmp = mem[mem_addr];
+            tmp = tmp & ~msk;
+            tmp = tmp | (i_wb_dat & msk);
+            mem[mem_addr] <= tmp;
         end
     end
     

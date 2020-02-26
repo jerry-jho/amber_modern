@@ -6,7 +6,10 @@ module cmod_a7_top (
     output led0_g,
     output led0_r,
     output uart_rxd_out,
-    input  uart_txd_in 
+    input  uart_txd_in,
+    input  pio28,
+    output pio27,
+    input  pio26    
 );
 
     wire clk_pll_out;
@@ -69,7 +72,7 @@ module cmod_a7_top (
       .CLKIN1(sysclk),       // 1-bit input: Clock
       // Control Ports: 1-bit (each) input: MMCM control ports
       .PWRDWN(1'b0),       // 1-bit input: Power-down
-      .RST(btn[0]),             // 1-bit input: Reset
+      .RST(btn[0] | pio28),             // 1-bit input: Reset
       // Feedback Clocks: 1-bit (each) input: Clock feedback ports
       .CLKFBIN(CLKFB)      // 1-bit input: Feedback clock
    );
@@ -89,6 +92,8 @@ module cmod_a7_top (
         .gpio_i({3'b0,btn[1]}),
         .tx(uart_rxd_out),
         .rx(uart_txd_in),
+        .tx1(pio27),
+        .rx1(pio26),
         .done(led0_r)
     );     
     assign led0_g = ~led0_gn;

@@ -33,6 +33,10 @@ void print(const char * s);
 #define REG_UART_FR     0x02000018
 #define REG_UART_FAKE   0x02000020
 
+#define REG_UART1_DR    0x03000000
+#define REG_UART1_FR    0x03000018
+#define REG_UART1_FAKE  0x03000020
+
 #define REG_GPIO        0x01000000
 #define REG_CYCLE       0x01000008
 #define REG_DONE        0x01FFFFFC
