@@ -48,10 +48,10 @@ Run the demo!
 1. Open Xilinx Hardware Manager and find the Cmod-A7 FPGA.
 2. Close all serial port debuggers to release the serial port, we'll use it later.
 3. Program cmod_a7_bls_uart0.bit (unzipped from release/cmod_a7_bls_uart0.zip).
-4. Edit the setenv.*sh to setup the directory, and *source* it.
-5. To build a test, run *cd simdir && make sw APP=blink*. Here blink is the application name stored in tests/blink.
-6. Program the CPU via serial port, run *python3 sw/bin/proj.py -p <serial_port> -f tests/blink/app.mem*. Press the reset button (the one next to the PMod slot) when required, and the programmer will flush the code into instruction memory.
-7. Run the application by *python3 sw/bin/proj.py -p <serial_port> -e run", you will see the leds and the coler leds blink in turn.
+4. Edit the `setenv.csh` or  `setenv.bash`  to setup the directory, and `source` it.
+5. To build a test, run `cd simdir && make sw APP=blink`. Here blink is the application name stored in tests/blink.
+6. Program the CPU via serial port, run `python3 sw/bin/proj.py -p <serial_port> -f tests/blink/app.mem`. Press the reset button (the one next to the PMod slot) when required, and the programmer will flush the code into instruction memory.
+7. Run the application by `python3 sw/bin/proj.py -p <serial_port> -e run`, you will see the leds and the coler leds blink in turn.
 
 Build and Program applications using UART1
 ==========================================
@@ -79,10 +79,39 @@ Run the demo!
 1. Open Xilinx Hardware Manager and find the Cmod-A7 FPGA.
 2. Serial port debuggers does not have to be closed, especially when your application uses it.
 3. Program cmod_a7_bls_uart1.bit (unzipped from release/cmod_a7_bls_uart1.zip).
-4. Edit the setenv.*sh to setup the directory, and *source* it.
-5. To build a test, run *cd simdir && make sw APP=blink*. Here blink is the application name stored in tests/blink.
-6. Program the CPU via serial port, run *python3 sw/bin/proj.py -p <converter_serial_port> -f tests/blink/app.mem*. If your serial converter has a cts pin connected, the programming will automatically start. Otherwise, press the reset button (the one next to the PMod slot) when required, and the programmer will flush the code into instruction memory.
-7. Run the application by *python3 sw/bin/proj.py -p <converter_serial_port> -e run", you will see the leds and the coler leds blink in turn. Also you may try the uart_led tests to control the leds by serial port.
+4. Edit the `setenv.csh` or  `setenv.bash`  to setup the directory, and `source` it
+5. To build a test, run `cd simdir && make sw APP=blink`. Here blink is the application name stored in tests/blink.
+6. Program the CPU via serial port, run `python3 sw/bin/proj.py -p <converter_serial_port> -f tests/blink/app.mem`. If your serial converter has a cts pin connected, the programming will automatically start. Otherwise, press the reset button (the one next to the PMod slot) when required, and the programmer will flush the code into instruction memory.
+7. Run the application by `python3 sw/bin/proj.py -p <converter_serial_port> -e run`, you will see the leds and the coler leds blink in turn. Also you may try the uart_led tests to control the leds by serial port.
+
+What if I have another FPGA?
+============================
+
+If you have FPGAs of Xilinx 7-series, make sure you have the followings on your platform:
+
+1. A 12MHz clock (usually from USB-serial chips), or you have the idea on how to generate a 12MHz clock (see `fpga/rtl/cmod_a7_top.v` for MMC)
+2. Enough GPIO pins for serial, push buttons and leds.
+
+Then modify the followings:
+
+1. `fpga/rtl/a25.sdc` to re-config the IO bindings.
+2. `fpga/rtl/fpga_run.tcl` to re-set your FPGA part.
+
+Then run vivado with:
+
+1. Edit the `setenv.csh` or  `setenv.bash`  to setup the directory, and `source` it
+2. Source the vivado settings csh/sh.
+3. Run `cd simdir && make vivado_ca7 APP=blink_print OPTS=-D_NO_BLS_` to generate a cmod_a7.bit similiar in 'Quick Start'.
+4. Run `cd simdir && make vivado_ca7 APP=blink_print OPTS=-D_BLS_UART0_` to generate a cmod_a7_bls_uart0.bit alike.
+5. Run `cd simdir && make vivado_ca7 APP=blink_print` to generate a cmod_a7_bls_uart1.bit alike. You need an extra usb-serial converter.
+6. The bit file is in simdir/work/a25.bit, program the bit file using Vivado Hardware Manager and the run demos. 
+
+
+
+
+
+
+
 
 
 
