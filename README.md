@@ -1,23 +1,26 @@
 Amber-Modern
 ============
 
-An ARM processor forked from amber project. 
+An ARM processor forked from amber a25 project. https://github.com/Disasm/amber-arm
 
 Quick Start
 ===========
 
-#Hardware:
+Hardware
+--------
 
 1. A Cmod-A7 FPGA module from Digilent : https://reference.digilentinc.com/reference/programmable-logic/cmod-a7/start
 
-#Software:
+Software
+--------
 
 1. MSYS2, Windows 10 WSL or Ubuntu Linux or CentOS Linux, root access for serial port.
 2. Vivado WebPACK (cost free from xilinx) (Digilent driver included)
 3. Any serial port debug tool, like putty
 4. ARM none-eabi compilers, either install from arm.com or like 'apt-get install gcc-arm-none-eabi'. Add the executables into PATH.
 
-#Run the demo!
+Run the demo!
+-------------
 
 1. Open Xilinx Hardware Manager and find the Cmod-A7 FPGA
 2. Open a serial terminal (putty or minicom) and find the second serial port of Cmod-A7, set the baudrate of 115200.
@@ -27,17 +30,20 @@ Quick Start
 Build and Program applications using UART0
 ==========================================
 
-#Hardware:
+Hardware
+--------
 
 All hardware from 'Quick Start'
 
-#Software:
+Software
+--------
 
 All software from 'Quick Start', and 
 
 1. Python3 with pyserial installed (pip3 install pyserial)
 
-#Run the demo!
+Run the demo!
+-------------
 
 1. Open Xilinx Hardware Manager and find the Cmod-A7 FPGA.
 2. Close all serial port debuggers to release the serial port, we'll use it later.
@@ -53,17 +59,20 @@ Build and Program applications using UART1
 We know the programmer requires UART0 which is not good for application that also uses UART0.
 Therefore we have an alternative method for programming applications.
 
-#Hardware:
+Hardware
+--------
 
 All hardware from 'Quick Start', and
 
 1. A USB-Serial converter, or RS232-TTL converter. A converter with RTS pin is recommended.
 
-#Software:
+Software
+--------
 
 All software from 'Quick Start'
 
-#Run the demo!
+Run the demo!
+-------------
 
 1. Power off the FPGA before operation. Plug the tx of your serial converter to Cmod-A7 Pin26 (Which is the rx of the chip), rx to Pin27, cts to Pin28 if you have one. Also GND to Pin24.
 2. Plug the converter onto your computer, notice its serial number.
