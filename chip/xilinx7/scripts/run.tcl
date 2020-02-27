@@ -1,11 +1,14 @@
 set project a25
-set top cmod_a7_top
-set part xc7a35tcpg236-1
+set top top
 
+source platform.tcl
 
 create_project $project . -force -part $part
+
+set SYN_OPTIONS ""
+
 source flist_vivado.tcl
-read_xdc ${project}.xdc
+read_xdc top.xdc
 eval "synth_design -top $top -part $part $SYN_OPTIONS"
 write_checkpoint -force ${project}.post_synth.dcp
 write_edif -force ${project}.edf

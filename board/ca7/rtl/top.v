@@ -1,4 +1,4 @@
-module cmod_a7_top (
+module top (
     input sysclk,
     input [1:0] btn,
     output [1:0] led,
@@ -85,7 +85,7 @@ module cmod_a7_top (
     );
     wire led0_gn,led0_bn;
     
-    a25_fpga_top #(.GPIO_GW(4)) i_a25_top (
+    fpga_core #(.GPIO_GW(4)) i_fpga_core (
         .clk(clk),
         .rst_n(rst_n),
         .gpio_o({led0_gn,led0_bn,led}),

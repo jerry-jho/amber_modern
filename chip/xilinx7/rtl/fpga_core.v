@@ -1,4 +1,4 @@
-module a25_fpga_top #(
+module fpga_core #(
     parameter real CLK_FREQ = 12,
     parameter GPIO_GW       = 2
 ) (

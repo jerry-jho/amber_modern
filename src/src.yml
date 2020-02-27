@@ -50,12 +50,6 @@ a25_core:
     rtl/core/a25_write_back.v
   ]
 
-a25_axil_top:
-  root : '$A25_ROOT'
-  files: [
-    rtl/a25_top.v,
-    rtl/interface/a25_wbs2axilm.sv
-  ]
   
 sram_generic:
   root : '$A25_ROOT'
@@ -64,43 +58,6 @@ sram_generic:
     rtl/platform/generic_sram_byte_en.v,
   ]
   
-fpga_generic:  
-    defines: [
-        FPGA
-    ]
-    root : '$A25_ROOT'
-    libdirs : [
-        $XILINX_VIVADO/data/verilog/src/unisims,
-        $XILINX_VIVADO/data/verilog/src/unimacro
-    ]
-    files: [        
-        fpga/rtl/a25_fpga_top.v,
-        rtl/wb/wb_down_bridge.v,
-        rtl/wb/wb_crossbar.v,
-        rtl/wb/wb_gpio_single.v,
-        rtl/wb/wb_uart.v,
-        $XILINX_VIVADO/data/verilog/src/glbl.v,
-        
-    ]
-    
-rtl_cmod_a7:    
-    root : '$A25_ROOT'
-    defines: [
-        FPGA
-    ]
-    files : [
-        fpga/rtl/cmod_a7_top.v,    
-    ]
-
-rom_cmod_a7:
-    root : '$A25_ROOT'
-    defines: [
-        FPGA
-    ]
-    files : [    
-        $PWD/sram_sp_128x2048.v
-    ]
-
 rom_generic:
     root : '$A25_ROOT'
     defines: [
@@ -111,27 +68,5 @@ rom_generic:
         rtl/platform/sram_sp_128x2048.v
     ]    
     
-syn_cmod_a7:  
-    root : '$A25_ROOT'
-    defines: [
-        FPGA,
-        NETLIST
-    ]
-    files : [
-        $PWD/a25.post_synth.sim.v
-    ]
     
-tb:
-    root : '$A25_ROOT'
-    files : [
-        tb/tb.sv,
-        tb/axil_sram.sv 
-    ]
-    
-tb_cmod_a7:
-    root : '$A25_ROOT'
-    files : [
-        tb/tb_cmod_a7.sv,
-        tb/uart_rx.sv,
-        tb/uart_tx.sv
-    ]
+

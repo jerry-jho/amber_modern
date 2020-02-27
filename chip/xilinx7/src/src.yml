@@ -1,0 +1,27 @@
+rtl:  
+    defines: [
+        FPGA
+    ]
+    root : '$A25_ROOT'
+    libdirs : [
+        $XILINX_VIVADO/data/verilog/src/unisims,
+        $XILINX_VIVADO/data/verilog/src/unimacro
+    ]
+    files: [        
+        chip/xilinx7/rtl/fpga_core.v,
+        rtl/wb/wb_down_bridge.v,
+        rtl/wb/wb_crossbar.v,
+        rtl/wb/wb_gpio_single.v,
+        rtl/wb/wb_uart.v,
+        $XILINX_VIVADO/data/verilog/src/glbl.v,   
+    ]
+    
+rom:
+    root : '$A25_ROOT'
+    defines: [
+        FPGA
+    ]
+    files : [    
+        $PWD/sram_sp_128x2048.v
+    ]
+    

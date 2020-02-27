@@ -83,7 +83,7 @@ if args.command == 'list':
         incdirs = ''
         if len(o_include) > 0:
             incdirs = ' -include_dirs {' + " ".join([expand_env(args.expand_env,k) for k in o_include]) + '}'
-        print('set SYN_OPTIONS "' + " ".join(["-verilog_define %s" % expand_env(args.expand_env,k) for k in o_defines]) + incdirs + '"') 
+        print('set SYN_OPTIONS "$SYN_OPTIONS ' + " ".join(["-verilog_define %s" % expand_env(args.expand_env,k) for k in o_defines]) + incdirs + '"') 
 elif args.command == 'concat':
     for d in o_defines:
         print("`define %s //%s" % (d.replace('=',' '),ymlfile))

@@ -1,22 +1,22 @@
 
 ############### Configurations ###############
 
-WORK=work
+WORK=work_$(A25_CHIP)_$(A25_BOARD)
 APP=smoke
 FSDB_EN=1
 OPTS=
-
-############### ENV ###############
-
-BOOT_ADDR=1000 
-MEM_SEL=MEM_IN
-MEM_BASE=0x0
-CHECK_A0=
+A25_CHIP ?= xilinx7
+A25_BOARD ?= ca7
 
 ############### Common Tasks ###############
 SCRIPTS=$(A25_ROOT)/scripts
-MAIN_SRC=$(A25_ROOT)/src/src_files.yml
-GEN_FLIST=python3 $(SCRIPTS)/process_flist_yml.py -f $(MAIN_SRC) -k
+FLIST_GEN=python3 $(SCRIPTS)/process_flist_yml.py
+MAIN_SRC=$(A25_ROOT)/src/src.yml
+MAIN_GEN=$(FLIST_GEN) -f $(MAIN_SRC) -k
+CHIP_SRC=$(A25_ROOT)/chip/$(A25_CHIP)/src/src.yml
+CHIP_GEN=$(FLIST_GEN) -f $(CHIP_SRC) -k
+BOARD_SRC=$(A25_ROOT)/board/$(A25_BOARD)/src/src.yml
+BOARD_GEN=$(FLIST_GEN) -f $(BOARD_SRC) -k
 
 mkwork:
 	mkdir -p $(WORK)  
@@ -35,61 +35,75 @@ sw: mkwork
 	cd $(A25_ROOT)/tests/$(APP) && make -f $(A25_ROOT)/sw/bin/Makefile OPTS=$(OPTS)
 	cp $(A25_ROOT)/tests/$(APP)/app.v $(WORK)/sram_sp_128x2048.v
     
-############### CA7_FPGA_BEH = Cmod A7 Behavior The firmware is float ###############    
+############### FPGA_BEH = Behavior: The firmware is float ###############    
     
-CA7_FPGA_BEH=a25_core,sram_generic,fpga_generic,rtl_cmod_a7,rom_generic,tb_cmod_a7
+KEY_BEH=a25_core,sram_generic,rom_generic
+KEY_CHIP_BEH=rtl
+KEY_BOARD_BEH=rtl,tb
     
-gen_flist_verdi_ca7_beh:mkwork
-	cd $(WORK) && $(GEN_FLIST) verdi,$(CA7_FPGA_BEH) > flist_verdi
+gen_flist_verdi_beh:mkwork
+	cd $(WORK) && $(MAIN_GEN) verdi,$(KEY_BEH) > flist_verdi
+	cd $(WORK) && $(CHIP_GEN) $(KEY_CHIP_BEH) >> flist_verdi
+	cd $(WORK) && $(BOARD_GEN) $(KEY_BOARD_BEH) >> flist_verdi
+    
+verdi_beh: gen_flist_verdi_beh exec_verdi
 
-verdi_ca7_beh: gen_flist_verdi_ca7_beh exec_verdi
+gen_flist_vcs_beh: mkwork
+	cd $(WORK) && $(MAIN_GEN) vcs,$(KEY_BEH) > flist_vcs
+	cd $(WORK) && $(CHIP_GEN) $(KEY_CHIP_BEH) >> flist_vcs
+	cd $(WORK) && $(BOARD_GEN) $(KEY_BOARD_BEH) >> flist_vcs
 
-gen_flist_vcs_ca7_beh: mkwork
-	cd $(WORK) && $(GEN_FLIST) vcs,$(CA7_FPGA_BEH) > flist_vcs
-
-vcs_ca7_beh: gen_flist_vcs_ca7_beh exec_vcs
+vcs_beh: gen_flist_vcs_beh exec_vcs
 
 
-############### CA7_FPGA_RTL = Cmod A7 FPGA RTL, The firmware is embedded ############### 
+############### FPGA_RTL = FPGA RTL, The firmware is embedded ############### 
 
-CA7_FPGA_RTL=a25_core,sram_generic,fpga_generic,rtl_cmod_a7,rom_cmod_a7
-CA7_FPGA_RTL_TB=$(CA7_FPGA_RTL),tb_cmod_a7
+KEY_RTL=a25_core,sram_generic
+KEY_CHIP_RTL=rtl,rom
+KEY_BOARD_RTL=rtl,tb
 
-gen_flist_verdi_ca7_rtl:mkwork
-	cd $(WORK) && $(GEN_FLIST) verdi,$(CA7_FPGA_RTL_TB) > flist_verdi
+gen_flist_verdi_rtl:mkwork
+	cd $(WORK) && $(MAIN_GEN) verdi,$(KEY_RTL) > flist_verdi
+	cd $(WORK) && $(CHIP_GEN) $(KEY_CHIP_RTL) >> flist_verdi
+	cd $(WORK) && $(BOARD_GEN) $(KEY_BOARD_RTL) >> flist_verdi
 
-verdi_ca7_rtl: sw gen_flist_verdi_ca7_rtl exec_verdi
+verdi_rtl: sw gen_flist_verdi_rtl exec_verdi
 
-gen_flist_vcs_ca7_rtl: mkwork
-	cd $(WORK) && $(GEN_FLIST) vcs,$(CA7_FPGA_RTL_TB) > flist_vcs
+gen_flist_vcs_rtl: mkwork
+	cd $(WORK) && $(MAIN_GEN) vcs,$(KEY_RTL) > flist_vcs
+	cd $(WORK) && $(CHIP_GEN) $(KEY_CHIP_RTL) >> flist_vcs
+	cd $(WORK) && $(BOARD_GEN) $(KEY_BOARD_RTL) >> flist_vcs
 
-vcs_ca7_rtl: sw gen_flist_vcs_ca7_rtl exec_vcs
+vcs_rtl: sw gen_flist_vcs_rtl exec_vcs
 
 ############### Execute Vivado ###############
 
-gen_flist_vivado_ca7: mkwork
-	cd $(WORK) && python3 $(SCRIPTS)/process_flist_yml.py -e -f $(MAIN_SRC) -k $(CA7_FPGA_RTL) -s vivado > flist_vivado.tcl    
-
-vivado_ca7: mkwork gen_flist_vivado_ca7 sw
-	cp $(A25_ROOT)/fpga/scripts/* $(WORK)/
-	cd $(WORK) && $(SCRIPTS)/vivado.sh -mode batch -source fpga_run.tcl
+gen_flist_vivado: mkwork
+	cd $(WORK) && $(FLIST_GEN) -f $(MAIN_SRC) -e -k $(KEY_RTL) -s vivado > flist_vivado.tcl    
+	cd $(WORK) && $(FLIST_GEN) -f $(CHIP_SRC) -e -k $(KEY_CHIP_RTL) -s vivado >> flist_vivado.tcl 
+	cd $(WORK) && $(FLIST_GEN) -f $(BOARD_SRC) -e -k rtl -s vivado >> flist_vivado.tcl 
+    
+vivado: mkwork gen_flist_vivado sw
+	cp $(A25_ROOT)/chip/$(A25_CHIP)/scripts/* $(WORK)/
+	cp $(A25_ROOT)/board/$(A25_BOARD)/scripts/* $(WORK)/
+	cd $(WORK) && $(SCRIPTS)/vivado.sh -mode batch -source run.tcl
     
 ############### CA7_FPGA_SYN = Cmod A7 FPGA Post Synthesis, The firmware is embedded ###############     
     
-CA7_FPGA_SYN=syn_cmod_a7
-CA7_FPGA_SYN_TB=$(CA7_FPGA_SYN),tb_cmod_a7
+KEY_SYN=syn,tb
 
-gen_flist_verdi_ca7_syn:mkwork
-	cd $(WORK) && $(GEN_FLIST) verdi,$(CA7_FPGA_SYN_TB) > flist_verdi
+gen_flist_verdi_syn:mkwork
+	cd $(WORK) && $(MAIN_GEN) verdi > flist_verdi
+	cd $(WORK) && $(BOARD_GEN) $(KEY_SYN) >> flist_verdi
 
-verdi_ca7_syn: gen_flist_verdi_ca7_syn exec_verdi
+verdi_syn: gen_flist_verdi_syn exec_verdi
 
-gen_flist_vcs_ca7_syn: mkwork
-	cd $(WORK) && $(GEN_FLIST) vcs,$(CA7_FPGA_SYN_TB) > flist_vcs
+gen_flist_vcs_syn: mkwork
+	cd $(WORK) && $(MAIN_GEN) vcs > flist_vcs
+	cd $(WORK) && $(BOARD_GEN) $(KEY_SYN) >> flist_vcs
 
-vcs_ca7_syn: gen_flist_vcs_ca7_syn exec_vcs
+vcs_syn: gen_flist_vcs_syn exec_vcs
 
-sim_ca7_syn: vcs_ca7_syn sim
 
 ###############
 

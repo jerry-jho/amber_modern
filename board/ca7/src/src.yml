@@ -1,0 +1,30 @@
+rtl:    
+    root : '$A25_ROOT/board/ca7'
+    defines: [
+        FPGA
+    ]
+    files : [
+        rtl/top.v,    
+    ]
+    
+tb:
+    root : '$A25_ROOT/board/ca7'
+    files : [
+        tb/tb.sv,
+        $A25_ROOT/tb/uart_rx.sv,
+        $A25_ROOT/tb/uart_tx.sv
+    ]
+    
+syn:  
+    root : '$A25_ROOT'
+    defines: [
+        FPGA,
+        NETLIST
+    ]
+    libdirs : [
+        $XILINX_VIVADO/data/verilog/src/unisims,
+        $XILINX_VIVADO/data/verilog/src/unimacro
+    ]
+    files : [
+        $PWD/a25.post_synth.sim.v
+    ]

@@ -36,7 +36,7 @@ module tb;
     initial begin
         if ($value$plusargs("MEM_IN=%s", im64_file)) begin
             $display("[TB] Reading imem = %s",im64_file);
-            dut.i_a25_top.u_rom.load_mem(im64_file);
+            dut.i_fpga_core.u_rom.load_mem(im64_file);
         end        
     end
     `endif
@@ -45,12 +45,15 @@ module tb;
     wire rx_in;
     wire tx1_out;
     wire rx1_in;
+    wire led0;
+    wire led1;
+    wire led0_b;
+    wire led0_g;
     
-    
-    cmod_a7_top dut (
+    top dut (
         .sysclk(sysclk),
         .btn({1'b0,rst}),
-        .led(),
+        .led({led1,led0}),
         .led0_b(),
         .led0_g(),
         .led0_r(led0_r),
@@ -167,6 +170,9 @@ module tb;
         $display("[INFO] Simulation Finishes");
         $finish;
     end
-
- 
+    
+    always @(posedge led0) $display("[HW] LED0 - On");
+    always @(negedge led0) $display("[HW] LED0 - Off");
+    always @(posedge led1) $display("[HW] LED1 - On");
+    always @(negedge led1) $display("[HW] LED1 - Off"); 
 endmodule
