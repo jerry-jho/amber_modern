@@ -111,7 +111,7 @@ Then run vivado with:
 6. Run `cd simdir && make vivado APP=blink_print` to generate a cmod_a7_bls_uart1.bit alike. You need an extra usb-serial converter.
 7. The bit file is in simdir/work_xilinx7_<your_board>/a25.bit, program the bit file using Vivado Hardware Manager and the run demos. 
 
-
+See A25_BOARD = hsxc7 for board https://item.taobao.com/item.htm?spm=a230r.1.14.4.76c36abazr01v0&id=598068789139&ns=1&abbucket=17#detail
 
 
 
