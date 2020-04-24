@@ -104,7 +104,7 @@ Also you may edit `/board/<your_board>/rtl/top.v` to get your own top, and also 
 Then run vivado with:
 
 1. Edit the `setenv.csh` or  `setenv.bash`  to setup the directory, and `source` it.
-2. Set A25_BOARD to your board name (the same name in /board directory)
+2. Set env A25_BOARD (use setenv/csh or export/bash) to your board name (the same name in /board directory)
 3. Source the vivado settings csh/sh.
 4. Run `cd simdir && make vivado APP=blink_print OPTS=-D_NO_BLS_` to generate a cmod_a7.bit similiar in 'Quick Start'.
 5. Run `cd simdir && make vivado APP=blink_print OPTS=-D_BLS_UART0_` to generate a cmod_a7_bls_uart0.bit alike.
